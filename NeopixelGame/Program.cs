@@ -3,7 +3,7 @@ using Neopixel.Client;
 using NeopixelGame;
 
 Console.WriteLine("Connecting to server...");
-NeopixelClient client = new ("192.168.1.157");
+NeopixelClient client = new ("<IpAddressOfYourServerHere>");
 Console.WriteLine("Connected!");
 
 client.OnDisconnection += () =>
