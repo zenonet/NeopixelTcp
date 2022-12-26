@@ -56,7 +56,7 @@ def handle_client(connection, client_address):
     # send version code
     connection.sendall(version)
 
-    connection.sendall(num_pixels.to_bytes(4, 'big'))
+    connection.sendall(num_pixels.to_bytes(4, 'little'))
 
     start_time = time.time()
     try:
