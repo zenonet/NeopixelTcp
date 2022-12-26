@@ -38,7 +38,15 @@ public struct Pixel
         }
     }
 
-    public Stripe Stripe { get; internal set; }
+    /// <summary>
+    /// Gets a reference to the stripe this pixel is part of.
+    /// </summary>
+    public Stripe? Stripe { get; internal set; }
+
+    /// <summary>
+    /// Gets a value indicating whether this pixel is part of a stripe.
+    /// </summary>
+    public bool IsPartOfStripe => Stripe != null;
 
     public Pixel(byte r, byte g, byte b)
     {
