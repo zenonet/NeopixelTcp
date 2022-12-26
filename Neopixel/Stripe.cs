@@ -12,9 +12,9 @@ public class Stripe : IEnumerable<Pixel>
     public Action<int> OnChanged { get; set; }
     
 
-    public Stripe(int pixelCount)
+    internal Stripe(int pixelCount)
     {
-        this.pixels = new Pixel[pixelCount];
+        pixels = new Pixel[pixelCount];
     }
 
     public Pixel this[int index]
