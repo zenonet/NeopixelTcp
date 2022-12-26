@@ -14,7 +14,7 @@ public struct Pixel
         set
         {
             r = value;
-            Stripe.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+            Stripe?.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
         }
     }
 
@@ -24,7 +24,7 @@ public struct Pixel
         set
         {
             g = value;
-            Stripe.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+            Stripe?.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
         }
     }
 
@@ -34,7 +34,7 @@ public struct Pixel
         set
         {
             b = value;
-            Stripe.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+            Stripe?.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
         }
     }
 
