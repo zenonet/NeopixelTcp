@@ -19,13 +19,17 @@ public class Stripe : IEnumerable<Pixel>
 
     public Pixel this[int index]
     {
-        get
+        get => this.pixels[index];
+        set
         {
-            LastHash = pixels.GetHashCode();
-            return this.pixels[index];
+            // Update the pixels stripe reference.
+            value.Stripe = this;
+            
+            this.pixels[index] = value;
+            OnChanged.Invoke(index);
         }
-        
     }
+
     public IEnumerator<Pixel> GetEnumerator()
     {
         return (IEnumerator<Pixel>) this.pixels.GetEnumerator();
