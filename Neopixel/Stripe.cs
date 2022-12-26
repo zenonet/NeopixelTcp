@@ -5,10 +5,12 @@ namespace Neopixel.Client;
 public class Stripe : IEnumerable<Pixel>
 {
     private readonly Pixel[] pixels;
-    
-    public int LastHash;
 
-    public event Action<int>? OnChanged;
+    /// <summary>
+    /// This event is raised when the pixel collection changes.
+    /// </summary>
+    public Action<int> OnChanged { get; set; }
+    
 
     public Stripe(int pixelCount)
     {
