@@ -62,6 +62,13 @@ public class NeopixelClient : IDisposable
 
         State = ClientState.Connected;
         StartBackgroundWorker();
+
+        Stripe.OnChanged += OnStripeChanged;
+    }
+
+    private void OnStripeChanged(int index)
+    {
+        SetPixel(index, Stripe[index]);
     }
 
     #region SetPixel and SetPixelAsync
