@@ -9,13 +9,13 @@ public class NeopixelClient : IDisposable
 {
     public static readonly (byte, byte) Version = (1, 0);
 
-    public readonly TcpClient TcpClient;
+    public TcpClient TcpClient { get; private set; }
 
-    public ClientState State;
+    public ClientState State { get; private set; }
 
     public event Action? OnDisconnection;
 
-    public bool UpdateManually;
+    public bool UpdateManually { get; set; }
 
     public Stripe Stripe { get; }
 
