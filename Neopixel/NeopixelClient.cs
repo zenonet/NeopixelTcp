@@ -17,7 +17,7 @@ public class NeopixelClient : IDisposable
 
     public bool UpdateManually;
 
-    public Pixel[] Pixels;
+    public Stripe Stripe { get; }
 
     public NeopixelClient(string ip, int port = 2688, bool updateManually = false)
     {
