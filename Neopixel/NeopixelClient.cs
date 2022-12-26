@@ -48,9 +48,11 @@ public class NeopixelClient : IDisposable
             if (buffer[0] != Version.Item1 || buffer[1] != Version.Item2)
                 throw new($"Server version is not compatible (Server version: {buffer[0]}.{buffer[1]})");
 
+            // Get the pixel count from the network stream
             int pixelCount = BitConverter.ToInt32(buffer, 2);
 
-            Pixels = new Pixel[pixelCount];
+            // Initialize the stripe
+            Stripe = new(pixelCount);
 
             State = ClientState.Connected;
             break;
