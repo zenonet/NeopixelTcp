@@ -39,4 +39,13 @@ public class Stripe : IEnumerable<Pixel>
     {
         return GetEnumerator();
     }
+    
+    /// <summary>
+    /// Returns the stripe as a Pixel array.
+    /// </summary>
+    /// <returns></returns>
+    public Pixel[] ToArray()
+    {
+        return this.pixels;
+    }
 }
