@@ -4,10 +4,41 @@ namespace Neopixel.Client;
 
 public struct Pixel
 {
-    public Color Color { get; set; }
-    public byte R;
-    public byte G;
-    public byte B;
+    private byte r;
+    private byte g;
+    private byte b;
+
+    public byte R
+    {
+        get => r;
+        set
+        {
+            r = value;
+            Stripe.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+        }
+    }
+
+    public byte G
+    {
+        get => g;
+        set
+        {
+            g = value;
+            Stripe.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+        }
+    }
+
+    public byte B
+    {
+        get => b;
+        set
+        {
+            b = value;
+            Stripe.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+        }
+    }
+
+    public Stripe Stripe { get; internal set; }
 
     public Pixel(byte r, byte g, byte b)
     {
@@ -32,6 +63,6 @@ public struct Pixel
     public static implicit operator Color(Pixel pixel) => Color.FromArgb(pixel.R, pixel.G, pixel.B);
 
     public static implicit operator Pixel((byte, byte, byte) tuple) => new(tuple.Item1, tuple.Item2, tuple.Item3);
-    
+
     public static implicit operator (byte, byte, byte)(Pixel pixel) => (pixel.R, pixel.G, pixel.B);
 }
