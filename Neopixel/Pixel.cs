@@ -60,6 +60,7 @@ public struct Pixel
         get => (R + G + B) / 3f;
         set
         {
+            // Change the brightness of the pixel by the given value.
             R = (byte) (value * R / Brightness);
             G = (byte) (value * G / Brightness);
             B = (byte) (value * B / Brightness);

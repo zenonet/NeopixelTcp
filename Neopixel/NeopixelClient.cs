@@ -42,7 +42,7 @@ public class NeopixelClient : IDisposable
                 continue;
 
             byte[] buffer = new byte[6];
-            _ = TcpClient.GetStream().Read(buffer);
+            _ = TcpClient.GetStream().Read(buffer, 0, 6);
 
             // Check if the server has sent the correct version code
             if (buffer[0] != Version.Item1 || buffer[1] != Version.Item2)
@@ -104,7 +104,7 @@ public class NeopixelClient : IDisposable
         buffer[3] = r;
         buffer[4] = g;
         buffer[5] = b;
-        await TcpClient.GetStream().WriteAsync(buffer);
+        await TcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
     }
 
     #endregion
@@ -139,7 +139,7 @@ public class NeopixelClient : IDisposable
         buffer[2] = r;
         buffer[3] = g;
         buffer[4] = b;
-        await TcpClient.GetStream().WriteAsync(buffer);
+        await TcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
     }
 
     #endregion
@@ -167,7 +167,7 @@ public class NeopixelClient : IDisposable
                 if (sw.Elapsed.Milliseconds > 4000)
                 {
                     sw.Restart();
-                    TcpClient.GetStream().Write(new byte[] {0x01, 0x05});
+                    TcpClient.GetStream().Write(new byte[] {0x01, 0x05}, 0, 2);
                 }
             }
         });
