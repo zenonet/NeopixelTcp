@@ -11,7 +11,11 @@ public class Stripe : IEnumerable<Pixel>
     /// </summary>
     public Action<int> OnChanged { get; set; }
     
-
+    /// <summary>
+    /// Gets the number of pixels in the stripe.
+    /// </summary>
+    public int PixelCount => pixels.Length;
+    
     internal Stripe(int pixelCount)
     {
         pixels = new Pixel[pixelCount];
