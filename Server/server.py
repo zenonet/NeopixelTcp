@@ -131,8 +131,6 @@ def handle_client(connection, client_address):
                 print(len(data))
                 data = data[5:]
                 print(len(data))
-                #input()
-
 
             elif data[0] == 0x03:
                 # Fill the strip
