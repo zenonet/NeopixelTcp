@@ -65,6 +65,12 @@ public class Pixel
         B = b;
     }
 
+    internal Pixel(int index, Stripe stripe)
+    {
+        Index = index;
+        Stripe = stripe;
+    }
+
     public float Brightness
     {
         get => (R + G + B) / 3f;
