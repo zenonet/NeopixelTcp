@@ -140,16 +140,22 @@ def handle_client(connection, client_address):
             elif data[0] == 0x02:
                 print("Setting pixel {} to {}".format(data[1], data[2:5]))
                 # Set a single pixel
-                if len(data) != 5:
+                if len(data) != 8:
                     continue
-                
+
+                # Get the index (4 byte int)
+                index:int = int.from_bytes(data[1:5], 'little')
+
                 # Length check
-                if data[1] >= num_pixels:
+                if index >= num_pixels:
                     continue
-                
-                pixels[data[1]] = (int(data[2]), int(data[3]), int(data[4]))
+
+                print(len(data))
+
+                pixels[index] = (int(data[5]), int(data[6]), int(data[7]))
                 pixels.show()
                 # Slice the data
+                data = data[8:]
 
                 # Update all other clients
                 for i in connections:
