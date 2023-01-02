@@ -3,6 +3,7 @@ import board
 import neopixel
 import socket
 import select
+from threading import Thread
 
 num_pixels = 83
 
@@ -151,11 +152,22 @@ def handle_client(connection, client_address):
         # Clean up the connection
         connection.close()
 
-while True:
-    # Wait for a connection
-    print('waiting for a connection...')
+threads = []
+connections = []
 
-    connection:socket.socket
-    connection, client_address = sock.accept()
+try:
+    while True:
+        # Wait for a connection
+        print('waiting for a connection...')
 
-    handle_client(connection, client_address)
+        connection:socket.socket
+        connection, client_address = sock.accept()
+
+        # Start a new thread to handle the client
+        threads.append(Thread(target=handle_client, args=(connection, client_address)).start())
+
+        connections.append(connection)
+finally:
+    for i in threads:
+        if i is not None:
+            i.join()
