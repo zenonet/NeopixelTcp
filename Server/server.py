@@ -39,6 +39,8 @@ pixels: neopixel.NeoPixel = neopixel.NeoPixel(board.D18, num_pixels, auto_write=
 # Create a TCP/IP socket
 sock:socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 
 # Bind the socket to the port
 server_address = ('0.0.0.0', 2688)
@@ -171,3 +173,8 @@ finally:
     for i in threads:
         if i is not None:
             i.join()
+
+    for c in connections:
+        connection.close()
+
+    sock.close()
