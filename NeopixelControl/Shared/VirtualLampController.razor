@@ -61,12 +61,12 @@ Use Transaction:   <input type="checkbox" @bind="UseTransaction" /><br/>
     {
         Stripe stripe = NeopixelClient.Stripe;
 
-        NeopixelClient.Fill(Color.Black);
-
         Pixel color = ColorTranslator.FromHtml(LampColor);
 
         NeopixelClient.IsTransacting = UseTransaction;
         
+        NeopixelClient.Fill(Color.Black);
+
         for (int i = 0; i < stripe.PixelCount; i++)
         {
             if (i % (LampWidth + LampDistance) < LampWidth)
