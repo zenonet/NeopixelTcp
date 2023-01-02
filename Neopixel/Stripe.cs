@@ -32,14 +32,21 @@ public class Stripe
 
     public Pixel this[int index]
     {
-        get => this.pixels[index];
+        get => this.pixels[index].Clone();
         set
         {
+            SuppressSync = true;
             // Update the pixels stripe reference.
             value.Stripe = this;
             
-            this.pixels[index] = value;
+            // Update the pixel index property
+            pixels[index].Index = index;
+            
+            SetPixel(index, value);
+            SuppressSync = false;
+
             OnChanged.Invoke(index);
+            
         }
     }
 
