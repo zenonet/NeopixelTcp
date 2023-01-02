@@ -36,14 +36,11 @@ public class Stripe : IEnumerable<Pixel>
         }
     }
 
-    public IEnumerator<Pixel> GetEnumerator()
+    private void SetPixel(int index, Pixel pixel)
     {
-        return (IEnumerator<Pixel>) this.pixels.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
+        pixels[index].R = pixel.R;
+        pixels[index].G = pixel.G;
+        pixels[index].B = pixel.B;
     }
     
     /// <summary>
