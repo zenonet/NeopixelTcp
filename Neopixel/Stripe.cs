@@ -21,6 +21,11 @@ public class Stripe : IEnumerable<Pixel>
     internal Stripe(int pixelCount)
     {
         pixels = new Pixel[pixelCount];
+        
+        for (int i = 0; i < pixelCount; i++)
+        {
+            pixels[i] = new(i, this);
+        }
     }
 
     public Pixel this[int index]
