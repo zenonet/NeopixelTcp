@@ -76,6 +76,11 @@ public class Pixel
             B = (byte) (value * B / Brightness);
         }
     }
+    
+    public Pixel Clone()
+    {
+        return new(R, G, B);
+    }
 
     public static implicit operator Pixel(Color color) => new(color.R, color.G, color.B);
 
