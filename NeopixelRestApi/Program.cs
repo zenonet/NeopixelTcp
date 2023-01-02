@@ -31,8 +31,10 @@ string MyHandler(int r, int g, int b)
     {
         NeopixelClient client = GetNeopixelClient();
 
+        client.IsTransacting = true;
         client.Fill(Color.FromArgb(255, r, g, b));
-
+        client.IsTransacting = false;
+        
         client.Dispose();
     }
     catch (Exception e)
@@ -54,10 +56,12 @@ app.MapGet("/fillDoor", (int r, int g, int b) =>
 
         Pixel pixel = Color.FromArgb(255, r, g, b);
 
+        client.IsTransacting = true;
         for (int i = 50; i < 74; i++)
         {
             stripe[i] = pixel;
         }
+        client.IsTransacting = false;
 
         client.Dispose();
     }
