@@ -35,7 +35,6 @@ public class Stripe
         get => this.pixels[index].Clone();
         set
         {
-            SuppressSync = true;
             // Update the pixels stripe reference.
             value.Stripe = this;
             
@@ -43,7 +42,6 @@ public class Stripe
             pixels[index].Index = index;
             
             SetPixel(index, value);
-            SuppressSync = false;
 
             OnChanged.Invoke(index);
             
