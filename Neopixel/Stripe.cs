@@ -2,9 +2,11 @@
 
 namespace Neopixel.Client;
 
-public class Stripe : IEnumerable<Pixel>
+public class Stripe
 {
     private readonly Pixel[] pixels;
+
+    public IEnumerable<Pixel> Pixels => pixels;
 
     /// <summary>
     /// This event is raised when the pixel collection changes.
