@@ -29,10 +29,30 @@ def getCommands(data: bytes) -> list[bytes]:
         # Get the command and cut it off
         commands.append(data[:length])
         data = data[length:]
-    
+
     return commands
 
 
+def updateClient(connection: socket.socket, index:int):
+    print("Updating client...")
+
+    buffer = bytearray()
+
+    # Add the update command
+    buffer += b'\x02'
+
+    # Add the index
+    buffer += index.to_bytes(4, 'little')
+
+    # Send the pixel data
+    buffer += pixels[index][0].to_bytes(1, 'little')
+    buffer += pixels[index][1].to_bytes(1, 'little')
+    buffer += pixels[index][2].to_bytes(1, 'little')
+
+    print("Sending data to client:", buffer)
+
+    # Send the data
+    connection.sendall(buffer)
 
 pixels: neopixel.NeoPixel = neopixel.NeoPixel(board.D18, num_pixels, auto_write=False)
 
@@ -131,9 +151,13 @@ def handle_client(connection, client_address):
                 pixels.show()
                 # Slice the data
 
-                print(len(data))
-                data = data[5:]
-                print(len(data))
+                # Update all other clients
+                for i in connections:
+                    if(i is not None and i != connection):
+                        try:
+                            updateClient(i, index)
+                        except:
+                            pass
 
             elif data[0] == 0x03:
                 # Fill the strip
