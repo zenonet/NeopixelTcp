@@ -1,0 +1,110 @@
+﻿@using Neopixel.Client
+@using System.Drawing
+
+<div>
+    <button class="btn btn-primary" style="margin: 5px" @onclick="PlacePixel">Place Pixel</button>
+    <br/>
+    
+    <button disabled="@ShowMovementButtons" class="btn btn-primary" style="margin: 5px" @onclick="MoveLeft">Left</button>
+    <button disabled="@ShowMovementButtons" class="btn btn-primary" style="margin: 5px" @onclick="MoveRight">Right</button>
+    
+    <br/>
+    
+    <div style="font-size: larger">
+        @(ColorToHsvString(pixel) + $" I: {Index}")
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public NeopixelClient NeopixelClient { get; set; }
+
+    public int Index { get; set; } = -1;
+    
+    public bool ShowMovementButtons => Index == -1;
+    
+    private Pixel OverriddenPixel { get; set; }
+
+    private Pixel pixel = Color.Red;
+
+    private void PlacePixel()
+    {
+        OverriddenPixel = NeopixelClient.Stripe[30];
+        NeopixelClient.Stripe[30] = pixel;
+        Index = 30;
+    }
+
+    private void MoveLeft()
+    {
+        NeopixelClient.Stripe[Index] = OverriddenPixel;
+        Index--;
+
+        if (Index < 0)
+            Index = 0;
+
+        UpdatePixel();
+    }
+
+    private void MoveRight()
+    {
+        NeopixelClient.Stripe[Index] = OverriddenPixel;
+        Index++;
+
+        if (Index >= NeopixelClient.Stripe.PixelCount)
+            Index = 0;
+
+        UpdatePixel();
+    }
+
+    private void UpdatePixel()
+    {
+        if (OverriddenPixel.Brightness != 0)
+        {
+            Color color = pixel;
+
+            float hue = color.GetHue();
+
+            hue += 568;
+
+            hue %= 255;
+            
+            pixel = ColorFromHSV(hue, 1, 1);
+        }
+        
+        OverriddenPixel = NeopixelClient.Stripe[Index];
+        NeopixelClient.Stripe[Index] = pixel;
+    }
+    
+    public static Color ColorFromHSV(double hue, double saturation, double value)
+    {
+        int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+        double f = hue / 60 - Math.Floor(hue / 60);
+
+        value = value * 255;
+        int v = Convert.ToInt32(value);
+        int p = Convert.ToInt32(value * (1 - saturation));
+        int q = Convert.ToInt32(value * (1 - f * saturation));
+        int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
+
+        if (hi == 0)
+            return Color.FromArgb(255, v, t, p);
+        else if (hi == 1)
+            return Color.FromArgb(255, q, v, p);
+        else if (hi == 2)
+            return Color.FromArgb(255, p, v, t);
+        else if (hi == 3)
+            return Color.FromArgb(255, p, q, v);
+        else if (hi == 4)
+            return Color.FromArgb(255, t, p, v);
+        else
+            return Color.FromArgb(255, v, p, q);
+    }
+    public static string ColorToHsvString(Color color)
+    {
+        float hue = color.GetHue();
+        double saturation = color.GetSaturation();
+
+        return $"H:{hue} S:{saturation} B:1";
+    }
+}

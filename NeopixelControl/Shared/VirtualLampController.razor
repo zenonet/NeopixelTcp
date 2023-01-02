@@ -1,0 +1,87 @@
+﻿@using Neopixel.Client
+@using System.Drawing
+
+<h1>Virtual Lamps</h1>
+
+Lamp Distance: <input class="e-slider slider" type="range" min="0" max="30" size="80" @bind="LampDistance"/>@LampDistance<br>
+Lamp Width:    <input class="e-slider slider" type="range" min="0" max="30" size="80" @bind="LampWidth"/>@LampWidth<br/>
+Lamp Color:    <input type="color" @bind="LampColor"/><br/>
+Auto Update:   <input type="checkbox" @bind="AutoUpdate" /><br/>
+<button class="btn btn-primary" @onclick="Update">Update</button>
+
+@code {
+
+    [Parameter]
+    public NeopixelClient NeopixelClient { get; set; }
+
+    public int LampWidth
+    {
+        get => lampWidth;
+        set
+        {
+            lampWidth = value; 
+            OnChange();
+        }
+    }
+
+    public int LampDistance
+    {
+        get => lampDistance;
+        set
+        {
+            lampDistance = value;
+            OnChange();
+        }
+    }
+
+    public string LampColor
+    {
+        get => lampColor;
+        set
+        {
+            lampColor = value;
+            OnChange();
+        }
+    }
+
+    public bool AutoUpdate
+    {
+        get => autoUpdate;
+        set
+        {
+            autoUpdate = value;
+            OnChange();
+        }
+    }
+
+    public void Update()
+    {
+        Stripe stripe = NeopixelClient.Stripe;
+
+        NeopixelClient.Fill(Color.Black);
+
+        Pixel color = ColorTranslator.FromHtml(LampColor);
+
+        for (int i = 0; i < stripe.PixelCount; i++)
+        {
+            if (i % (LampWidth + LampDistance) < LampWidth)
+            {
+                stripe[i] = color;
+            }
+        }
+    }
+
+
+    private void OnChange()
+    {
+        if (!AutoUpdate)
+            return;
+
+        Update();
+    }
+
+    private string lampColor = "#FF0000";
+    private int lampDistance = 16;
+    private int lampWidth = 5;
+    private bool autoUpdate = true;
+}
