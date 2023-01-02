@@ -15,6 +15,8 @@ public class Stripe : IEnumerable<Pixel>
     /// Gets the number of pixels in the stripe.
     /// </summary>
     public int PixelCount => pixels.Length;
+
+    internal bool SuppressSync { get; set; }
     
     internal Stripe(int pixelCount)
     {

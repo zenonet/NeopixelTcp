@@ -68,6 +68,9 @@ public class NeopixelClient : IDisposable
 
     private void OnStripeChanged(int index)
     {
+        if (Stripe.SuppressSync)
+            return;
+
         SetPixel(index, Stripe[index]);
     }
 
