@@ -168,11 +168,35 @@ public class NeopixelClient : IDisposable
                     return;
                 }
 
-                if (TcpClient.GetStream().ReadByte() == 0x01 && TcpClient.GetStream().ReadByte() == 0x04)
+                // Check if the server has sent a command
+                if (TcpClient.Available > 0)
                 {
-                    State = ClientState.NotConnected;
-                    TcpClient.Close();
-                    OnDisconnection?.Invoke();
+                    byte op = (byte) TcpClient.GetStream().ReadByte();
+
+
+                    // Check for the disconnection packet
+                    if (op == 0x01)
+                    {
+                        State = ClientState.NotConnected;
+                        TcpClient.Close();
+                        OnDisconnection?.Invoke();
+                    }
+
+                    // Check if the stripe has been changed
+                    if (op == 0x02)
+                    {
+                        byte[] buffer = new byte[7];
+                        _ = TcpClient.GetStream().Read(buffer, 0, 7);
+
+                        int index = BitConverter.ToInt32(buffer, 0);
+                        byte r = buffer[4];
+                        byte g = buffer[5];
+                        byte b = buffer[6];
+
+                        Stripe.SuppressSync = true;
+                        Stripe[index] = new(r, g, b);
+                        Stripe.SuppressSync = false;
+                    }
                 }
 
                 if (sw.Elapsed.Milliseconds > 4000)
