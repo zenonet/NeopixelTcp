@@ -2,7 +2,7 @@
 
 namespace Neopixel.Client;
 
-public struct Pixel
+public class Pixel
 {
     private byte r;
     private byte g;
