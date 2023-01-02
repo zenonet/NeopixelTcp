@@ -91,7 +91,7 @@ def handle_client(connection, client_address):
                 print("Timeout")
                 try:
                     # Send the disconnect command
-                    connection.sendall(b'\x01\x04')
+                    connection.sendall(b'\x01')
                 except:
                     pass
                 #close the connection
