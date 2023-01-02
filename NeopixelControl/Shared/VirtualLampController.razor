@@ -7,6 +7,7 @@ Lamp Distance: <input class="e-slider slider" type="range" min="0" max="30" size
 Lamp Width:    <input class="e-slider slider" type="range" min="0" max="30" size="80" @bind="LampWidth"/>@LampWidth<br/>
 Lamp Color:    <input type="color" @bind="LampColor"/><br/>
 Auto Update:   <input type="checkbox" @bind="AutoUpdate" /><br/>
+Use Transaction:   <input type="checkbox" @bind="UseTransaction" /><br/>
 <button class="btn btn-primary" @onclick="Update">Update</button>
 
 @code {
@@ -54,6 +55,8 @@ Auto Update:   <input type="checkbox" @bind="AutoUpdate" /><br/>
         }
     }
 
+    public bool UseTransaction { get; set; }
+
     public void Update()
     {
         Stripe stripe = NeopixelClient.Stripe;
@@ -62,6 +65,8 @@ Auto Update:   <input type="checkbox" @bind="AutoUpdate" /><br/>
 
         Pixel color = ColorTranslator.FromHtml(LampColor);
 
+        NeopixelClient.IsTransacting = UseTransaction;
+        
         for (int i = 0; i < stripe.PixelCount; i++)
         {
             if (i % (LampWidth + LampDistance) < LampWidth)
@@ -69,6 +74,8 @@ Auto Update:   <input type="checkbox" @bind="AutoUpdate" /><br/>
                 stripe[i] = color;
             }
         }
+        
+        NeopixelClient.IsTransacting = false;
     }
 
 
