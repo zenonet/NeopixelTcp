@@ -14,7 +14,7 @@ public struct Pixel
         set
         {
             r = value;
-            Stripe?.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+            InvokeOnChanged();
         }
     }
 
@@ -24,7 +24,7 @@ public struct Pixel
         set
         {
             g = value;
-            Stripe?.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+            InvokeOnChanged();
         }
     }
 
@@ -34,9 +34,19 @@ public struct Pixel
         set
         {
             b = value;
-            Stripe?.OnChanged.Invoke(Array.IndexOf(Stripe.ToArray(), this));
+            InvokeOnChanged();
         }
     }
+
+    private void InvokeOnChanged()
+    {
+        Stripe?.OnChanged.Invoke(Index);
+    }
+
+    /// <summary>
+    /// The index of the current pixel in the stripe
+    /// </summary>
+    public int Index { get; internal set; }
 
     /// <summary>
     /// Gets a reference to the stripe this pixel is part of.
