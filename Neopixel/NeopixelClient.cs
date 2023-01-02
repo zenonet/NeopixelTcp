@@ -143,6 +143,14 @@ public class NeopixelClient : IDisposable
         buffer[3] = g;
         buffer[4] = b;
         await TcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
+        
+        // Update the stripe
+        Stripe.SuppressSync = true;
+        for (int x = 0; x < Stripe.PixelCount; x++)
+        {
+            Stripe[x] = new(r, g, b);
+        }
+        Stripe.SuppressSync = false;
     }
 
     #endregion
