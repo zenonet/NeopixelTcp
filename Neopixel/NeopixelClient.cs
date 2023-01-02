@@ -93,20 +93,23 @@ public class NeopixelClient : IDisposable
 
     public async Task SetPixelAsync(int index, byte r, byte g, byte b)
     {
-        byte[] buffer = new byte[6];
+        byte[] buffer = new byte[9];
         // Command length
-        buffer[0] = 5;
+        buffer[0] = 8;
 
         // Opcode
         buffer[1] = 0x02;
 
-        // Index of the led to set
-        buffer[2] = (byte) index;
-
+        // Get the index as as byte array
+        byte[] indexAsBytes = BitConverter.GetBytes(index);
+        
+        // Copy the index to the buffer
+        Array.Copy(indexAsBytes, 0, buffer, 2, 4);
+        
         // Color values
-        buffer[3] = r;
-        buffer[4] = g;
-        buffer[5] = b;
+        buffer[6] = r;
+        buffer[7] = g;
+        buffer[8] = b;
         await TcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
     }
 
