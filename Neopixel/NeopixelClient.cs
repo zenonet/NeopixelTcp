@@ -19,6 +19,38 @@ public class NeopixelClient : IDisposable
 
     public Stripe Stripe { get; }
 
+    
+    private bool isTransacting;
+    public bool IsTransacting
+    {
+        get => isTransacting;
+        set
+        {
+            if(IsTransacting == value)
+                return;
+            
+            isTransacting = value;
+            
+            SendTransactionPacket(value);
+        }
+    }
+
+    private void SendTransactionPacket(bool isTransacting)
+    {
+        NetworkStream stream = TcpClient.GetStream();
+        
+        byte[] buffer = new byte[2];
+        
+        // Add the size of the packet
+        buffer[0] = 1;
+        
+        // Add the transaction state
+        buffer[1] = (byte) (isTransacting ? 0xFE : 0xFF);
+        
+        // Send the packet
+        stream.Write(buffer, 0, buffer.Length);
+    }
+
     public NeopixelClient(string ip, int port = 2688, bool updateManually = false)
     {
         UpdateManually = updateManually;

@@ -22,3 +22,17 @@ The client can set a pixel by sending a 9 byte message with the following format
 2. The opcode (1 byte, for setting a pixel the opcode is 0x02)
 3. The pixel index (4 byte integer)
 4. The 3 color values (rgb, 3 bytes)
+
+### Transactions
+
+Transactions can be used to ensure that multiple pixels are set at the same time. This is useful for animations. The client can start a transaction by sending a 2 byte message with the following format:
+
+1. The length of the following data (1 byte, usually 0x01)
+2. The opcode (1 byte, for starting a transaction the opcode is 0xFE)
+
+The client can end a transaction by sending a 2 byte message with the following format:
+
+1. The length of the following data (1 byte, usually 0x01)
+2. The opcode (1 byte, for ending a transaction the opcode is 0xFF)
+
+When a transaction is ended the changes are applied to the pixels.

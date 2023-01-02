@@ -13,6 +13,8 @@ clear_on_start = True
 
 TIMEOUT = 5
 
+
+
 def getCommands(data: bytes) -> list[bytes]:
     commands: list[bytes] = []
     while len(data) > 0:
@@ -85,6 +87,8 @@ def handle_client(connection, client_address):
     try:
         print('connection from', client_address)
 
+        isTransaction: bool = False
+
         while True:
 
             if time.time() - start_time > TIMEOUT:
@@ -134,7 +138,9 @@ def handle_client(connection, client_address):
             if data[0] == 0x01:
                 # Clear the strip
                 pixels.fill((0, 0, 0))
-                pixels.show()
+
+                if not isTransaction:
+                    pixels.show()
                 data = data[1:]
 
             elif data[0] == 0x02:
@@ -153,8 +159,11 @@ def handle_client(connection, client_address):
                 print(len(data))
 
                 pixels[index] = (int(data[5]), int(data[6]), int(data[7]))
-                pixels.show()
-                # Slice the data
+
+                if not isTransaction:
+                    pixels.show()
+
+                    # Slice the data
                 data = data[8:]
 
                 # Update all other clients
@@ -170,7 +179,9 @@ def handle_client(connection, client_address):
                 if len(data) != 4:
                     continue
                 pixels.fill((int(data[1]), int(data[2]), int(data[3])))
-                pixels.show()
+
+                if not isTransaction:
+                    pixels.show()
 
                 data = data[4:]
             elif data[0] == 0x04:
@@ -179,6 +190,16 @@ def handle_client(connection, client_address):
                 break
             elif data[0] == 0x05:
                 # Do nothing, just keep the connection alive
+                data = data[1:]
+
+            # Transaction start
+            elif data[0] == 0xFE:
+                isTransaction = True
+                data = data[1:]
+            # Transaction end
+            elif data[0] == 0xFF:
+                isTransaction = False
+                pixels.show()
                 data = data[1:]
     finally:
         # Clean up the connection
