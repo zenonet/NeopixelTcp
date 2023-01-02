@@ -35,10 +35,6 @@ string MyHandler(int r, int g, int b)
 
         client.Dispose();
     }
-    catch (NeopixelServerOccupiedException)
-    {
-        return "{\n\"status\":\"error\",\n\"message\": \"Server is already controlled by another client\"\n}";
-    }
     catch (Exception e)
     {
         return "{\n\"status\":\"error\",\n\"message\": \"" + e.Message + "\"\n}";
@@ -65,17 +61,13 @@ app.MapGet("/fillDoor", (int r, int g, int b) =>
 
         client.Dispose();
     }
-    catch (NeopixelServerOccupiedException)
-    {
-        return "{\n\"status\":\"error\",\n\"message\": \"Server is already controlled by another client\"\n}";
-    }
     catch (Exception e)
     {
         return "{\n\"status\":\"error\",\n\"message\": \"" + e.Message + "\"\n}";
     }
 
     return "{\n\"status\":\"ok\"\n}";
-}).WithDescription("Fills the pixels above the door with the given color");
+}).WithDescription("Fills the pixels above the door with the given color").WithOpenApi();
 
 app.Run();
 
