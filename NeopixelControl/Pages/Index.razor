@@ -13,6 +13,8 @@
 <br/>
 <br/>
 <VirtualLampController NeopixelClient="neopixelClient" @ref="virtualLampController"/>
+
+<NeopixelStripeVisualisation Stripe="neopixelClient.Stripe"/>
 @if (connectionError)
 {
     <!-- This is the popup to create or edit a forecast -->

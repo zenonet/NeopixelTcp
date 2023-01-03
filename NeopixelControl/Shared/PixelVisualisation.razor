@@ -1,0 +1,34 @@
+﻿@using Neopixel.Client
+@using System.Drawing
+
+<input style="height: 15px;
+                  width: 15px;
+                  border-width: 0px;
+                  margin: 0;
+                  padding: 0;" type="color" @bind="Color"/>
+
+@code {
+    [Parameter]
+    public Stripe Stripe { get; set; }
+
+    [Parameter]
+    public int Index { get; set; }
+
+    public string Color
+    {
+        get => ColorTranslator.ToHtml(Stripe[Index]);
+        set => Stripe[Index] = ColorTranslator.FromHtml(value);
+    }
+
+    protected override void OnInitialized()
+    {
+        Stripe.OnStripeChanged += (_, i) =>
+        {
+            if(Index != i)
+                return;
+
+            InvokeAsync(StateHasChanged);
+        };
+    }
+
+}
