@@ -37,6 +37,8 @@
 
     private void MoveLeft()
     {
+        NeopixelClient.IsTransacting = true;
+        
         NeopixelClient.Stripe[Index] = OverriddenPixel;
         Index--;
 
@@ -44,10 +46,14 @@
             Index = 0;
 
         UpdatePixel();
+        
+        NeopixelClient.IsTransacting = false;
     }
 
     private void MoveRight()
     {
+        NeopixelClient.IsTransacting = true;
+        
         NeopixelClient.Stripe[Index] = OverriddenPixel;
         Index++;
 
@@ -55,6 +61,8 @@
             Index = 0;
 
         UpdatePixel();
+        
+        NeopixelClient.IsTransacting = false;
     }
 
     private void UpdatePixel()
