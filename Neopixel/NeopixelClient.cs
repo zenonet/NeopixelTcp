@@ -95,10 +95,10 @@ public class NeopixelClient : IDisposable
         State = ClientState.Connected;
         StartBackgroundWorker();
 
-        Stripe.OnChanged += OnStripeChanged;
+        Stripe.OnStripeChangedLocally += SyncChanges;
     }
 
-    private void OnStripeChanged(int index)
+    private void SyncChanges(Stripe _, int index)
     {
         if (Stripe.SuppressSync)
             return;
@@ -231,6 +231,8 @@ public class NeopixelClient : IDisposable
                         Stripe.SuppressSync = true;
                         Stripe[index] = new(r, g, b);
                         Stripe.SuppressSync = false;
+                        
+                        Stripe.RaiseOnStripeChangedRemotely(index);
                     }
                 }
 

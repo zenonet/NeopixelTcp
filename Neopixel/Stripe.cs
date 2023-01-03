@@ -9,10 +9,32 @@ public class Stripe
     public IEnumerable<Pixel> Pixels => pixels;
 
     /// <summary>
-    /// This event is raised when the pixel collection changes.
+    /// This event is raised when the pixel collection is changed locally.
     /// </summary>
-    public Action<int> OnChanged { get; set; }
+    public event StripeChangedEventHandler OnStripeChangedLocally;
+
+    /// <summary>
+    /// This event is raised when the pixel collection is changed remotely.
+    /// </summary>
+    public event StripeChangedEventHandler OnStripeChangedRemotely;
     
+    /// <summary>
+    /// This event is raised when the pixel collection is changed (Remotely or Locally).
+    /// </summary>
+    public StripeChangedEventHandler OnStripeChanged { get; set; }
+    
+    internal void RaiseOnStripeChangedLocally(int index)
+    {
+        OnStripeChangedLocally?.Invoke(this, index);
+        OnStripeChanged?.Invoke(this, index);
+    }
+    
+    internal void RaiseOnStripeChangedRemotely(int index)
+    {
+        OnStripeChangedRemotely?.Invoke(this, index);
+        OnStripeChanged?.Invoke(this, index);
+    }
+
     /// <summary>
     /// Gets the number of pixels in the stripe.
     /// </summary>
@@ -43,8 +65,7 @@ public class Stripe
             
             SetPixel(index, value);
 
-            OnChanged.Invoke(index);
-            
+            RaiseOnStripeChangedLocally(index);
         }
     }
 
@@ -64,3 +85,5 @@ public class Stripe
         return this.pixels;
     }
 }
+
+public delegate void StripeChangedEventHandler(Stripe sender, int index);

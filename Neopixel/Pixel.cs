@@ -40,7 +40,7 @@ public class Pixel
 
     private void InvokeOnChanged()
     {
-        Stripe?.OnChanged.Invoke(Index);
+        Stripe?.RaiseOnStripeChangedLocally(Index);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ public class Pixel
             G = (byte) (value * G / Brightness);
             B = (byte) (value * B / Brightness);
             Stripe.SuppressSync = false;
-            Stripe.OnChanged.Invoke(Index);
+            Stripe.RaiseOnStripeChangedLocally(Index);
         }
     }
     
