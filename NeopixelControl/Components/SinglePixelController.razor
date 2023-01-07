@@ -1,5 +1,6 @@
 ﻿@using Neopixel.Client
 @using System.Drawing
+@inject NeopixelClient NeopixelClient
 
 <div>
     <button class="btn btn-primary" style="margin: 5px" @onclick="PlacePixel">Place Pixel</button>
@@ -16,9 +17,6 @@
 </div>
 
 @code {
-
-    [Parameter]
-    public NeopixelClient NeopixelClient { get; set; }
 
     public int Index { get; set; } = -1;
     

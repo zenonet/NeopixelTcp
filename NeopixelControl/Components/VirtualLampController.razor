@@ -2,21 +2,18 @@
 @using System.Drawing
 @using Microsoft.AspNetCore.Components
 @using NeopixelControl.Data
+@inject NeopixelClient NeopixelClient
 
 <h1>Virtual Lamps</h1>
 
-Lamp Distance: <input class="e-slider slider" type="range" min="0" max="30" size="80" @bind="Data.LampDistance"/>@Data.LampDistance<br>
-Lamp Width:    <input class="e-slider slider" type="range" min="0" max="30" size="80" @bind="Data.LampWidth"/>@Data.LampWidth<br/>
+Lamp Distance: <input class="form-control-range" type="range" min="0" max="30" size="80" @bind="Data.LampDistance"/>@Data.LampDistance<br>
+Lamp Width:    <input class="form-control-range" type="range" min="0" max="30" size="80" @bind="Data.LampWidth"/>@Data.LampWidth<br/>
 Lamp Color:    <input type="color" @bind="Data.LampColor"/><br/>
 Auto Update:   <input type="checkbox" @bind="Data.AutoUpdate" /><br/>
 Use Transaction:   <input type="checkbox" @bind="Data.UseTransaction" /><br/>
 <button class="btn btn-primary" @onclick="Update">Update</button>
 
 @code {
-
-    [Parameter]
-    public NeopixelClient NeopixelClient { get; set; }
-    
     public VirtualLampControllerData Data { get; set; }
 
     protected override void OnInitialized()
