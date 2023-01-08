@@ -249,6 +249,8 @@ public class NeopixelClient : IDisposable
     {
         State = ClientState.Disposing;
 
+        OnDisconnection?.Invoke();
+        
         //Tell the server close the connection
 
         // Write the lenght of the operation
