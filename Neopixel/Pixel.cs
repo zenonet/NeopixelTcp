@@ -78,14 +78,14 @@ public class Pixel
         {
             Stripe.SuppressSync = true;
             // Change the brightness of the pixel by the given value.
-            R = (byte) (value * R / Brightness);
-            G = (byte) (value * G / Brightness);
-            B = (byte) (value * B / Brightness);
+            R = (byte) (value * (R / Brightness)); // 255
+            G = (byte) (value * (G / Brightness)); // 20
+            B = (byte) (value * (B / Brightness)); // 0
             Stripe.SuppressSync = false;
             Stripe.RaiseOnStripeChangedLocally(Index);
         }
     }
-    
+
     public Pixel Clone()
     {
         return new(R, G, B);
