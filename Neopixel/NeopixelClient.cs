@@ -195,14 +195,8 @@ public class NeopixelClient : IDisposable
         return Task.Run(() =>
         {
             Stopwatch sw = Stopwatch.StartNew();
-            while (true)
+            while (State == ClientState.Connected)
             {
-                if (State == ClientState.Disposing)
-                {
-                    // Stop the background worker
-                    return;
-                }
-
                 // Check if the server has sent a command
                 if (TcpClient.Available > 0)
                 {
