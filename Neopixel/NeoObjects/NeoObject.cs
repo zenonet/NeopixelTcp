@@ -31,26 +31,44 @@ public class NeoObject
     /// </summary>
     public NeoScene Scene { get; set; }
 
+    /// <summary>
+    /// The stripe the scene uses
+    /// </summary>
     public Stripe Stripe => Scene.Stripe;
 
+    /// <summary>
+    /// The neopixelClient the scene uses
+    /// </summary>
     public NeopixelClient Client => Scene.Client;
 
+    /// <summary>
+    /// Is called before any objects are rendered
+    /// </summary>
     public event Action<Stripe, NeoObject>? OnRenderEvent;
 
     #region Pivot Transformed Position Properties
 
+    /// <summary>
+    /// The position of the object measured from the start of the stripe to the center of the object
+    /// </summary>
     public int CenterAlignedPosition
     {
         get => Position - (sbyte) Pivot;
         set => Position = value + (sbyte) Pivot;
     }
 
+    /// <summary>
+    /// The position of the object measured from the start of the stripe to the start of the object
+    /// </summary>
     public int LeftAlignedPosition
     {
         get => CenterAlignedPosition - Size / 2;
         set => CenterAlignedPosition = value + Size / 2;
     }
 
+    /// <summary>
+    /// The position of the object measured from the start of the stripe to the end of the object
+    /// </summary>
     public int RightAlignedPosition
     {
         get => CenterAlignedPosition + Size / 2;
