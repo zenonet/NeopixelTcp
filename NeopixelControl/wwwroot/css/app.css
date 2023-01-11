@@ -9,13 +9,7 @@ h1:focus {
 }
 
 a, .btn-link {
-    color: darkred;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: red;
-    border-color: red;
+    color: #18BC9C;
 }
 
 .content {
@@ -88,3 +82,9 @@ a, .btn-link {
     width: 90%;
     overflow: hidden;
 }
+
+.sidebar{
+    background-color: #18BC9C;
+}
+
+

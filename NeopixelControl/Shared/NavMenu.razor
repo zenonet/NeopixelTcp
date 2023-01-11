@@ -1,7 +1,7 @@
 ﻿@using Neopixel.Client
 @inject NeopixelClient NeopixelClient
 
-<div class="top-row ps-10 navbar navbar-dark" style="width: fit-content;">
+<div class="top-row ps-10 navbar" style="width: fit-content;">
     <div class="container-fluid">
         <a class="navbar-brand" href="">NeopixelControl</a>
         <!--@((MarkupString) connectionStatus)-->
@@ -21,6 +21,11 @@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
                 <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="timer">
+                <span class="oi oi-plus" aria-hidden="true"></span> Timer
             </NavLink>
         </div>
     </nav>
