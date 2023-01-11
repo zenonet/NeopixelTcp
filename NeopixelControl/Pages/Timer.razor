@@ -1,0 +1,33 @@
+﻿@page "/Timer"
+@using Neopixel.Client
+@using System.Diagnostics
+@inject NeopixelClient NeopixelClient
+<h1>Timer</h1>
+
+<input class="form-control" placeholder="Seconds" type="number" style="margin: 10px;" @bind="Time"/>
+<button class="btn btn-primary" @onclick="StartTimer" style="margin: 10px;">Start</button>
+
+@code {
+    private int Time { get; set; }
+
+    private async void StartTimer()
+    {
+        //double seconds = TimeSpan.Parse(Time).TotalSeconds;
+        double seconds = Time;
+        
+        double secondsPerPixel = seconds / NeopixelClient.Stripe.PixelCount;
+        
+        await NeopixelClient.FillAsync(System.Drawing.Color.Black);
+
+        Stopwatch sw = Stopwatch.StartNew();
+        for (int i = 0; i < NeopixelClient.Stripe.PixelCount; i++)
+        {
+            sw.Restart();
+            NeopixelClient.Stripe[i] = System.Drawing.Color.Red;
+            
+            await Task.Delay((int)(secondsPerPixel * 1000) - sw.Elapsed.Seconds);
+        }
+
+    }
+
+}
