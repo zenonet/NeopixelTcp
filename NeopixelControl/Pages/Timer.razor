@@ -5,18 +5,23 @@
 <h1>Timer</h1>
 
 <input class="form-control" placeholder="Seconds" type="number" style="margin: 10px;" @bind="Time"/>
-<button class="btn btn-primary" @onclick="StartTimer" style="margin: 10px;">Start</button>
+<button class="btn btn-primary" @onclick="OnStartTimerButtonClick" style="margin: 10px;">Start</button>
 
 @code {
     private int Time { get; set; }
 
-    private async void StartTimer()
+    private async void OnStartTimerButtonClick()
     {
-        //double seconds = TimeSpan.Parse(Time).TotalSeconds;
+    //double seconds = TimeSpan.Parse(Time).TotalSeconds;
         double seconds = Time;
         
+#if ANDROID
+        Android.Content.Intent intent = new(Android.App.Application.Context, typeof(TimerForegroundService));
+        intent.PutExtra("seconds", seconds);
+        Android.App.Application.Context.StartForegroundService(intent);
+#else
         double secondsPerPixel = seconds / NeopixelClient.Stripe.PixelCount;
-        
+
         await NeopixelClient.FillAsync(System.Drawing.Color.Black);
 
         Stopwatch sw = Stopwatch.StartNew();
@@ -24,10 +29,10 @@
         {
             sw.Restart();
             NeopixelClient.Stripe[i] = System.Drawing.Color.Red;
-            
-            await Task.Delay((int)(secondsPerPixel * 1000) - sw.Elapsed.Seconds);
-        }
 
+            await Task.Delay((int) (secondsPerPixel * 1000) - sw.Elapsed.Seconds);
+        }
+#endif
     }
 
 }
