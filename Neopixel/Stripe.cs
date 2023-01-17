@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace Neopixel.Client;
+﻿namespace Neopixel.Client;
 
 public class Stripe
 {
@@ -17,18 +15,18 @@ public class Stripe
     /// This event is raised when the pixel collection is changed remotely.
     /// </summary>
     public event StripeChangedEventHandler OnStripeChangedRemotely;
-    
+
     /// <summary>
     /// This event is raised when the pixel collection is changed (Remotely or Locally).
     /// </summary>
     public StripeChangedEventHandler OnStripeChanged { get; set; }
-    
+
     internal void RaiseOnStripeChangedLocally(int index)
     {
         OnStripeChangedLocally?.Invoke(this, index);
         OnStripeChanged?.Invoke(this, index);
     }
-    
+
     internal void RaiseOnStripeChangedRemotely(int index)
     {
         OnStripeChangedRemotely?.Invoke(this, index);
@@ -41,11 +39,11 @@ public class Stripe
     public int PixelCount => pixels.Length;
 
     internal bool SuppressSync { get; set; }
-    
+
     internal Stripe(int pixelCount)
     {
         pixels = new Pixel[pixelCount];
-        
+
         for (int i = 0; i < pixelCount; i++)
         {
             pixels[i] = new(i, this);
@@ -54,15 +52,15 @@ public class Stripe
 
     public Pixel this[int index]
     {
-        get => this.pixels[index].Clone();
+        get => this.pixels[index % PixelCount].Clone();
         set
         {
             // Update the pixels stripe reference.
             value.Stripe = this;
-            
+
             // Update the pixel index property
-            pixels[index].Index = index;
-            
+            pixels[index % PixelCount].Index = index;
+
             SetPixel(index, value);
 
             RaiseOnStripeChangedLocally(index);
@@ -75,7 +73,7 @@ public class Stripe
         pixels[index].G = pixel.G;
         pixels[index].B = pixel.B;
     }
-    
+
     /// <summary>
     /// Returns the stripe as a Pixel array.
     /// </summary>
