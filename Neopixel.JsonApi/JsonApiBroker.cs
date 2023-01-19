@@ -1,7 +1,5 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Neopixel.Client;
 
 namespace Neopixel.JsonApi;
@@ -29,9 +27,6 @@ public class JsonApiBroker
             AllowTrailingCommas = true,
             PropertyNameCaseInsensitive = true,
         };
-        
-        // Allow for removing the $ in front of the type property
-        json = json.Replace("type", "$type");
         
         NeopixelRequest? neopixelRequest = JsonSerializer.Deserialize<NeopixelRequest>(json);
 
