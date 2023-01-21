@@ -2,10 +2,43 @@ import bpy
 import socket
 import time
 from threading import Thread
+from bpy.types import Operator, AddonPreferences
+from bpy.props import StringProperty, IntProperty, BoolProperty
+from bpy.app.handlers import persistent
 
+
+bl_info = {
+    "name": "Neopixel Render Progress",
+    "blender": (3, 3, 0),
+    "category": "System",
+    "description": "This addon allows you to connect your blender instance to a neopixel server (https://github.com/zenonet/NeopixelTcp) and display rendering progress on the stripe",
+}
 
 HOST = "192.168.1.157"
 PORT = 2688
+
+class NeopixelPreferences(AddonPreferences):
+    # this must match the add-on name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    ipAddress: StringProperty(
+        name="IP Address",
+        description="The IP Address of you neopixel server",
+        default="",
+    )
+
+    enabled: BoolProperty(
+        name="Enabled",
+        description="Enable or disable the neopixel render progress",
+        default=True,
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "ipAddress")
+        layout.prop(self, "enabled")
+
 
 def recvThread(sock: socket.socket):
     t = time.time()
@@ -85,103 +118,74 @@ def stopTransaction(sock):
     buffer += b'\xFF'
 
     sock.sendall(buffer)
-    
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect((HOST, PORT))
-
-serversion = s.recv(2)
-print("Server is running on version " + str(serversion[0]) + "." + str(serversion[1]))
-    
-pixel_count = int.from_bytes(s.recv(4), "little")
-print("Server is running with " + str(pixel_count) + " pixels")
-
-Thread(target=recvThread, args=(s,)).start()
-
-
-
-scene = bpy.data.scenes[0]
 
 
 isRendering = False
+s: socket.socket = None
+preferences: bpy.types.Preferences = None
 
-def set_render_state_true(scene):
+@persistent
+def set_render_state_true(ho, hoo):
     global isRendering
     isRendering = True
+    print("Setting render state to true")
 
-
-def set_render_state_false(scene):
+@persistent
+def set_render_state_false(ho, hoo):
     global isRendering
     isRendering = False
+    print("Setting render state to false")
 
-class ModalTimerOperator(bpy.types.Operator):
-    """Operator which runs itself from a timer"""
-    bl_idname = "wm.modal_timer_operator"
-    bl_label = "Modal Timer Operator"
+@persistent
+def startNeopixel():
+    global s
+    global pixel_count
+    global preferences
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((bpy.context.preferences.addons[__name__].preferences.ipAddress, PORT))
 
-    _timer = None
-    
-    lastFrame = 0
-
-    def modal(self, context, event):
-        if event.type in {'RIGHTMOUSE', 'ESC'}:
-            self.cancel(context)
-            return {'CANCELLED'}
-
-        if event.type == 'TIMER':
-            # change theme color, silly!
-            print(isRendering)
-            if self.lastFrame != scene.frame_current and isRendering:
-                self.lastFrame = scene.frame_current
-                length = scene.frame_end - scene.frame_start
-                pixelsPerFrame = pixel_count / length
-                print("Pixels per frame", pixelsPerFrame)
-                print("Now setting a pixel..." + str(int(pixelsPerFrame * scene.frame_current)))
-                
-                startTransaction(s)
-                clearStripe(s)
-                for i in range(int(pixelsPerFrame * (scene.frame_current - scene.frame_start))):
-                    setPixel(s, i, 0, 255, 0)
-                stopTransaction(s)
+    serversion = s.recv(2)
+    print("Server is running on version " + str(serversion[0]) + "." + str(serversion[1]))
         
-        return {'PASS_THROUGH'}
+    pixel_count = int.from_bytes(s.recv(4), "little")
+    print("Server is running with " + str(pixel_count) + " pixels")
 
-    def execute(self, context):
-        wm = context.window_manager
-        self._timer = wm.event_timer_add(0.3, window=context.window)
-        wm.modal_handler_add(self)
-        return {'RUNNING_MODAL'}
+    Thread(target=recvThread, args=(s)).start()
 
-    def cancel(self, context):
-        wm = context.window_manager
-        wm.event_timer_remove(self._timer)
+@persistent
+def updateNeopixel(scene):
+    global s
+    global isRendering
+    global pixel_count
+    global preferences
 
+    print(isRendering)
+    print("Enabled: ", bpy.context.preferences.addons[__name__].preferences.enabled)
+    if isRendering and bpy.context.preferences.addons[__name__].preferences.enabled:
+        if s is None:
+            startNeopixel()
 
-def menu_func(self, context):
-    self.layout.operator(ModalTimerOperator.bl_idname, text=ModalTimerOperator.bl_label)
-
-
-
+        length = scene.frame_end - scene.frame_start
+        pixelsPerFrame = pixel_count / length
+        print("Pixels per frame", pixelsPerFrame)
+        print("Now setting a pixel..." + str(int(pixelsPerFrame * scene.frame_current)))
+                
+        startTransaction(s)
+        clearStripe(s)
+        for i in range(int(pixelsPerFrame * (scene.frame_current - scene.frame_start))):
+            setPixel(s, i, 0, 255, 0)
+        stopTransaction(s)
 
 def register():
-    bpy.utils.register_class(ModalTimerOperator)
-    bpy.types.VIEW3D_MT_view.append(menu_func)
+    bpy.utils.register_class(NeopixelPreferences)
     
     bpy.app.handlers.render_init.append(set_render_state_true)
     bpy.app.handlers.render_cancel.append(set_render_state_false)
     bpy.app.handlers.render_complete.append(set_render_state_false)
 
+    bpy.app.handlers.render_post.append(updateNeopixel)
 
-# Register and add to the "view" menu (required to also use F3 search "Modal Timer Operator" for quick access).
 def unregister():
-    bpy.utils.unregister_class(ModalTimerOperator)
-    bpy.types.VIEW3D_MT_view.remove(menu_func)
+    bpy.utils.unregister_class(NeopixelPreferences)
 
-
-if __name__ == "__main__":
-    register()
-
-    # test call
-    bpy.ops.wm.modal_timer_operator()
-
-
+    bpy.app.handlers.render_post.remove(updateNeopixel)
