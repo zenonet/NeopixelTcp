@@ -13,7 +13,8 @@ clear_on_start = True
 
 TIMEOUT = 5
 
-
+threads = []
+connections = []
 
 def getCommands(data: bytes) -> list[bytes]:
     commands: list[bytes] = []
@@ -31,13 +32,11 @@ def getCommands(data: bytes) -> list[bytes]:
         # Get the command and cut it off
         commands.append(data[:length])
         data = data[length:]
-
+    
     return commands
 
 
 def updateClient(connection: socket.socket, index:int):
-    print("Updating client...")
-
     buffer = bytearray()
 
     # Add the update command
@@ -50,8 +49,6 @@ def updateClient(connection: socket.socket, index:int):
     buffer += pixels[index][0].to_bytes(1, 'little')
     buffer += pixels[index][1].to_bytes(1, 'little')
     buffer += pixels[index][2].to_bytes(1, 'little')
-
-    print("Sending data to client:", buffer)
 
     # Send the data
     connection.sendall(buffer)
@@ -78,6 +75,7 @@ if clear_on_start:
     pixels.fill((0, 0, 0))
 
 def handle_client(connection, client_address):
+
     # send version code
     connection.sendall(version)
 
@@ -86,6 +84,7 @@ def handle_client(connection, client_address):
     start_time = time.time()
     try:
         print('connection from', client_address)
+        print("Currently having " + str(len(connections)) + " connections")
 
         isTransaction: bool = False
 
@@ -100,6 +99,7 @@ def handle_client(connection, client_address):
                     pass
                 #close the connection
                 connection.close()
+
 
                 return
             # Check if the client still exists (as described here: https://stackoverflow.com/questions/17386487/python-detect-when-a-socket-disconnects-for-any-reason)
@@ -148,27 +148,30 @@ def handle_client(connection, client_address):
                 # Set a single pixel
                 if len(data) != 8:
                     continue
-
+                
                 # Get the index (4 byte int)
                 index:int = int.from_bytes(data[1:5], 'little')
 
                 # Length check
                 if index >= num_pixels:
                     continue
-
+                
                 print(len(data))
 
                 pixels[index] = (int(data[5]), int(data[6]), int(data[7]))
 
                 if not isTransaction:
-                    pixels.show()
-
-                    # Slice the data
+                    pixels.show()                
+                    
+                # Slice the data
                 data = data[8:]
 
                 # Update all other clients
                 for i in connections:
-                    if(i is not None and i != connection):
+                    if i is None:
+                        connections.remove(i)
+                        continue
+                    if(i != connection):
                         try:
                             updateClient(i, index)
                         except:
@@ -179,7 +182,7 @@ def handle_client(connection, client_address):
                 if len(data) != 4:
                     continue
                 pixels.fill((int(data[1]), int(data[2]), int(data[3])))
-
+                
                 if not isTransaction:
                     pixels.show()
 
@@ -187,7 +190,8 @@ def handle_client(connection, client_address):
             elif data[0] == 0x04:
                 print("Closed the connection to the current client")
                 connection.close()
-                break
+                connections.remove(connection)
+                return
             elif data[0] == 0x05:
                 # Do nothing, just keep the connection alive
                 data = data[1:]
@@ -204,9 +208,12 @@ def handle_client(connection, client_address):
     finally:
         # Clean up the connection
         connection.close()
+        connections.remove(connection)
 
-threads = []
-connections = []
+
+def cleanupThreads():
+    # Remove all dead threads
+    threads = [t for t in threads if not t.isAlive()]
 
 try:
     while True:
