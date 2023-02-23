@@ -1,13 +1,23 @@
-﻿using System;
-using System.Drawing;
-using MQTTnet.Server;
+﻿using MQTTnet.Server;
 using MQTTnet;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Neopixel.JsonApi;
 using static System.Console;
 
+
+var req = new NeopixelRequest
+{
+    Commands = new NeopixelCommand[]
+    {
+        new FillCommand
+        {
+            Color = new Color(255, 255, 255)
+        },
+    }
+};
+
+Console.WriteLine(JsonSerializer.Serialize(req));
 
 
 // Create the options for MQTT Broker
@@ -15,35 +25,40 @@ MqttServerOptionsBuilder? options = new MqttServerOptionsBuilder().WithDefaultEn
 // Create a new mqtt server
 MqttServer? server = new MqttFactory().CreateMqttServer(options.Build());
 
-JsonApiBroker broker = new ("192.168.1.157");
+JsonApiBroker broker = null;
 
 //Add Interceptor for logging incoming messages
 server.InterceptingPublishAsync += Server_InterceptingPublishAsync;
 
-
 // Start the server
 await server.StartAsync();
 // Keep application running until user press a key
-ReadLine();
-
+while (true)
+{
+    
+}
 
 async Task Server_InterceptingPublishAsync(InterceptingPublishEventArgs arg)
 {
-    // Convert Payload to string
-    string? payload = arg.ApplicationMessage?.Payload == null ? null : Encoding.UTF8.GetString(arg.ApplicationMessage?.Payload);
-
-    if(payload == null)
-        return;
+    // Late initialization of the broker
+    if (broker == null)
+    {
+        broker = new("192.168.1.157");
+    }
     
-    broker.RunFromJson(payload);
+    // Ensure that the server doesn't stop when an exception occurs
+    try
+    {
+        // Convert Payload to string
+        string? payload = arg.ApplicationMessage?.Payload == null ? null : Encoding.UTF8.GetString(arg.ApplicationMessage?.Payload);
 
-    WriteLine(
-        " TimeStamp: {0} -- Message: ClientId = {1}, Topic = {2}, Payload = {3}, QoS = {4}, Retain-Flag = {5}",
+        if (payload == null)
+            return;
 
-        DateTime.Now,
-        arg.ClientId,
-        arg.ApplicationMessage?.Topic,
-        payload,
-        arg.ApplicationMessage?.QualityOfServiceLevel,
-        arg.ApplicationMessage?.Retain);
+        broker.RunFromJson(payload);
+
+    }catch(Exception ex)
+    {
+        WriteLine(ex.Message);
+    }
 }
