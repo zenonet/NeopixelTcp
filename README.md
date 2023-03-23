@@ -14,7 +14,7 @@ Neopixel TCP is made to be implemented into as much software as possible. For ex
 
 Games:
 - Potion Craft
-- Minecraft (Java Edition)
+- Minecraft Java Edition (Currently only shows health)
 
 Programs:
 - Blender
