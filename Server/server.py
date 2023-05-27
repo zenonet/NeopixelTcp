@@ -217,10 +217,10 @@ def cleanupThreads():
 
 try:
     while True:
-        # Wait for a connection
         print('waiting for a connection...')
 
         connection:socket.socket
+        # Wait for a connection
         connection, client_address = sock.accept()
 
         # Start a new thread to handle the client
@@ -228,11 +228,14 @@ try:
 
         connections.append(connection)
 finally:
+    # Ensure that all threads are stopped properly
     for i in threads:
         if i is not None:
             i.join()
 
+    # Close all connections
     for c in connections:
         connection.close()
 
+    # Close the server
     sock.close()
