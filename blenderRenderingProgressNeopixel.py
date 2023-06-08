@@ -14,9 +14,6 @@ bl_info = {
     "description": "This addon allows you to connect your blender instance to a neopixel server (https://github.com/zenonet/NeopixelTcp) and display rendering progress on the stripe",
 }
 
-HOST = "192.168.1.157"
-PORT = 2688
-
 class NeopixelPreferences(AddonPreferences):
     # this must match the add-on name, use '__package__'
     # when defining this in a submodule of a python package.
@@ -125,18 +122,6 @@ s: socket.socket = None
 preferences: bpy.types.Preferences = None
 
 @persistent
-def set_render_state_true(ho, hoo):
-    global isRendering
-    isRendering = True
-    print("Setting render state to true")
-
-@persistent
-def set_render_state_false(ho, hoo):
-    global isRendering
-    isRendering = False
-    print("Setting render state to false")
-
-@persistent
 def startNeopixel():
     global s
     global pixel_count
@@ -161,7 +146,7 @@ def updateNeopixel(scene):
 
     print(isRendering)
     print("Enabled: ", bpy.context.preferences.addons[__name__].preferences.enabled)
-    if isRendering and bpy.context.preferences.addons[__name__].preferences.enabled:
+    if bpy.context.preferences.addons[__name__].preferences.enabled:
         if s is None:
             startNeopixel()
 
@@ -178,10 +163,6 @@ def updateNeopixel(scene):
 
 def register():
     bpy.utils.register_class(NeopixelPreferences)
-    
-    bpy.app.handlers.render_init.append(set_render_state_true)
-    bpy.app.handlers.render_cancel.append(set_render_state_false)
-    bpy.app.handlers.render_complete.append(set_render_state_false)
 
     bpy.app.handlers.render_post.append(updateNeopixel)
 
