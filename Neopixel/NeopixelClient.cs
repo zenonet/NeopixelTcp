@@ -149,21 +149,33 @@ public class NeopixelClient : IDisposable
 
     #region Fill and FillAsync
 
+    /// <summary>
+    /// Fills the whole stripe with the specified color
+    /// </summary>
     public void Fill(Color color)
     {
         Fill(color.R, color.G, color.B);
     }
 
+    /// <summary>
+    /// Fills the whole stripe with the specified color
+    /// </summary>
     private void Fill(byte r, byte g, byte b)
     {
         FillAsync(r, g, b).Wait();
     }
 
+    /// <summary>
+    /// Fills the whole stripe with the specified color asynchronously
+    /// </summary>
     public async Task FillAsync(Color color)
     {
         await FillAsync(color.R, color.G, color.B);
     }
 
+    /// <summary>
+    /// Fills the whole stripe with the specified color asynchronously
+    /// </summary>
     private async Task FillAsync(byte r, byte g, byte b)
     {
         byte[] buffer = new byte[6];
