@@ -6,7 +6,7 @@ to take control over a Neopixel Stripe via TCP. This means you can easily contro
 ## Libraries
 
 There are a few client libraries for different programming languages that allow you to control the neopixel server easily. The main library is written in C# however
-there also is one for Java.
+there also a simple one for Java.
 
 ## Implementations
 
