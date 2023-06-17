@@ -65,7 +65,7 @@ public class NeopixelClient : IDisposable
         Stopwatch timeout = Stopwatch.StartNew();
         while (true)
         {
-            if (timeout.Elapsed.Milliseconds > 400)
+            if (timeout.ElapsedMilliseconds > 600)
             {
                 throw new("Connection timed out");
             }
