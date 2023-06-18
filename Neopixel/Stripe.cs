@@ -58,10 +58,13 @@ public class Stripe
             // Update the pixels stripe reference.
             value.Stripe = this;
 
+            // Force the index to be positive.
+            index = Math.Abs(index);
+            
             // Update the pixel index property
-            pixels[index % PixelCount].Index = index;
+            pixels[index % PixelCount].Index = index % PixelCount;
 
-            SetPixel(index, value);
+            SetPixel(index % PixelCount, value);
 
             RaiseOnStripeChangedLocally(index);
         }
