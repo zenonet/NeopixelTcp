@@ -9,17 +9,17 @@ public class Stripe
     /// <summary>
     /// This event is raised when the pixel collection is changed locally.
     /// </summary>
-    public event StripeChangedEventHandler OnStripeChangedLocally;
+    public event StripeChangedEventHandler? OnStripeChangedLocally;
 
     /// <summary>
     /// This event is raised when the pixel collection is changed remotely.
     /// </summary>
-    public event StripeChangedEventHandler OnStripeChangedRemotely;
+    public event StripeChangedEventHandler? OnStripeChangedRemotely;
 
     /// <summary>
     /// This event is raised when the pixel collection is changed (Remotely or Locally).
     /// </summary>
-    public StripeChangedEventHandler OnStripeChanged { get; set; }
+    public StripeChangedEventHandler? OnStripeChanged { get; set; }
 
     internal void RaiseOnStripeChangedLocally(int index)
     {
