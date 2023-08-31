@@ -17,20 +17,29 @@ public class NeopixelClient : IDisposable
 
     public bool UpdateManually { get; set; }
 
+    /// <summary>
+    /// A representation of the stripe this client is in control of
+    /// </summary>
     public Stripe Stripe { get; }
 
-    
+
     private bool isTransacting;
+
+    /// <summary>
+    /// This property indicates if the client is currently transacting with the server
+    /// You can start/stop a transaction by setting this property
+    /// Learn more about transactions here: 
+    /// </summary>
     public bool IsTransacting
     {
         get => isTransacting;
         set
         {
-            if(IsTransacting == value)
+            if (IsTransacting == value)
                 return;
-            
+
             isTransacting = value;
-            
+
             SendTransactionPacket(value);
         }
     }
@@ -38,15 +47,15 @@ public class NeopixelClient : IDisposable
     private void SendTransactionPacket(bool isTransacting)
     {
         NetworkStream stream = TcpClient.GetStream();
-        
+
         byte[] buffer = new byte[2];
-        
+
         // Add the size of the packet
         buffer[0] = 1;
-        
+
         // Add the transaction state
         buffer[1] = (byte) (isTransacting ? 0xFE : 0xFF);
-        
+
         // Send the packet
         stream.Write(buffer, 0, buffer.Length);
     }
@@ -134,10 +143,10 @@ public class NeopixelClient : IDisposable
 
         // Get the index as as byte array
         byte[] indexAsBytes = BitConverter.GetBytes(index);
-        
+
         // Copy the index to the buffer
         Array.Copy(indexAsBytes, 0, buffer, 2, 4);
-        
+
         // Color values
         buffer[6] = r;
         buffer[7] = g;
@@ -190,7 +199,7 @@ public class NeopixelClient : IDisposable
         buffer[3] = g;
         buffer[4] = b;
         await TcpClient.GetStream().WriteAsync(buffer, 0, buffer.Length);
-        
+
         // Update the stripe
         Stripe.SuppressSync = true;
         for (int x = 0; x < Stripe.PixelCount; x++)
@@ -237,7 +246,7 @@ public class NeopixelClient : IDisposable
                         Stripe.SuppressSync = true;
                         Stripe[index] = new(r, g, b);
                         Stripe.SuppressSync = false;
-                        
+
                         Stripe.RaiseOnStripeChangedRemotely(index);
                     }
                 }
@@ -256,7 +265,7 @@ public class NeopixelClient : IDisposable
         State = ClientState.Disposing;
 
         OnDisconnection?.Invoke();
-        
+
         //Tell the server close the connection
 
         // Write the lenght of the operation
