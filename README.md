@@ -18,5 +18,3 @@ Games:
 
 Programs:
 - Blender
-
-More implementations are coming soon.
