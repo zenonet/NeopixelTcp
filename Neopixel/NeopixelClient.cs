@@ -117,21 +117,49 @@ public class NeopixelClient : IDisposable
 
     #region SetPixel and SetPixelAsync
 
+    /// <summary>
+    /// Manually sends a pixel change packet to the server
+    /// </summary>
+    /// <param name="index">The LED's index</param>
+    /// <param name="color">The color to set</param>
+    /// <remarks>Calling this method does not update the Stripe Property essentially desyncing client and server</remarks>
     public void SetPixel(int index, Color color)
     {
         SetPixel(index, color.R, color.G, color.B);
     }
 
+    /// <summary>
+    /// Manually sends a pixel change packet to the server
+    /// </summary>
+    /// <param name="index">The LED's index</param>
+    /// <param name="r">The red component of the color</param>
+    /// <param name="g">The green component of the color</param>
+    /// <param name="b">The blue component of the color</param>
+    /// <remarks>Calling this method does not update the Stripe Property essentially desyncing client and server</remarks>
     public void SetPixel(int index, byte r, byte g, byte b)
     {
         SetPixelAsync(index, r, g, b).Wait();
     }
 
+    /// <summary>
+    /// Manually sends a pixel change packet to the server ansynchronously
+    /// </summary>
+    /// <param name="index">The LED's index</param>
+    /// <param name="color">The color to set</param>
+    /// <remarks>Calling this method does not update the Stripe Property essentially desyncing client and server</remarks>
     public async Task SetPixelAsync(int index, Color color)
     {
         await SetPixelAsync(index, color.R, color.G, color.B);
     }
 
+    /// <summary>
+    /// Manually sends a pixel change packet to the server asynchronously
+    /// </summary>
+    /// <param name="index">The LED's index</param>
+    /// <param name="r">The red component of the color</param>
+    /// <param name="g">The green component of the color</param>
+    /// <param name="b">The blue component of the color</param>
+    /// <remarks>Calling this method does not update the Stripe Property essentially desyncing client and server</remarks>
     public async Task SetPixelAsync(int index, byte r, byte g, byte b)
     {
         byte[] buffer = new byte[9];
@@ -250,10 +278,11 @@ public class NeopixelClient : IDisposable
                         Stripe.RaiseOnStripeChangedRemotely(index);
                     }
                 }
-
+                // Timeout
                 if (sw.Elapsed.Milliseconds > 4000)
                 {
                     sw.Restart();
+                    // Send a disconnection packet
                     TcpClient.GetStream().Write(new byte[] {0x01, 0x05}, 0, 2);
                 }
             }
