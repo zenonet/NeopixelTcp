@@ -15,6 +15,9 @@ public class NeopixelClient : IDisposable
 
     public event Action? OnDisconnection;
 
+    /// <summary>
+    /// Specifies whether the client should automatically send updates to the server when the Stripe property is modified
+    /// </summary>
     public bool UpdateManually { get; set; }
 
     /// <summary>
@@ -109,7 +112,7 @@ public class NeopixelClient : IDisposable
 
     private void SyncChanges(Stripe _, int index)
     {
-        if (Stripe.SuppressSync)
+        if (UpdateManually || Stripe.SuppressSync)
             return;
 
         SetPixel(index, Stripe[index]);
