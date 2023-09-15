@@ -5,14 +5,26 @@ using System.Net.Sockets;
 
 namespace Neopixel.Client;
 
+/// <summary>
+/// NeopixelClient provides a simple way to connect to a Neopixel Server and control a stripe
+/// </summary>
 public class NeopixelClient : IDisposable
 {
     public static readonly (byte, byte) Version = (1, 0);
 
+    /// <summary>
+    /// The TcpClient used to communicate with the server
+    /// </summary>
     public TcpClient TcpClient { get; private set; }
 
+    /// <summary>
+    /// The current state of the NeopixelClient instance
+    /// </summary>
     public ClientState State { get; private set; }
 
+    /// <summary>
+    /// An event that is called when the client is disconnected from the server
+    /// </summary>
     public event Action? OnDisconnection;
 
     /// <summary>
