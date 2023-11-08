@@ -14,7 +14,7 @@ The C# Library is the main client library. I is based purely on the TcpClient cl
 
 ## Implementations
 
-Neopixel TCP is made to be implemented into as much software as possible. For example there already are implementations for:
+Neopixel TCP is made to be implementable into as much software as possible. For example there already are implementations for:
 
 Games:
 - Potion Craft
